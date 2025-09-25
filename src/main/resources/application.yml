@@ -1,51 +1,9 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/orders_db
-    username: admin
-    password: admin
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    show-sql: true
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
-
 jwt:
-  secret: "2378273823723У78237283У6"
+  secret: your-super-secret-jwt-key-make-it-very-long-and-secure-1234567890
 
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    tags-sorter: alpha
-    operations-sorter: alpha
-
----
-# Профиль для Docker
 spring:
-  config:
-    activate:
-      on-profile: docker
-  datasource:
-    url: jdbc:postgresql://postgres:5432/orders_db  # Изменено с localhost на postgres
-    username: admin
-    password: admin
-    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    show-sql: true
   flyway:
     enabled: true
-    locations: classpath:db/migration

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
-@SuppressWarnings("unused")
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
         List<Order> findByUser(User user);

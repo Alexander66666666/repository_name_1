@@ -2,8 +2,9 @@ package com.example.orderservice.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+
 @Data
-public class OrderRequest {
-    @NotBlank(message = "Description is mandatory")
-    private String description;
+public class RefreshTokenRequest {
+    @NotBlank
+    private String refreshToken;
 }

@@ -5,7 +5,6 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-@SuppressWarnings("unused")
 @Data
 public class OrderResponse {
     private UUID id;

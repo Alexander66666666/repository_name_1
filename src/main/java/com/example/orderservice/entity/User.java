@@ -10,8 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-
-@SuppressWarnings("unused")
 @Data
 @Entity
 @Table(name = "users")
@@ -19,6 +17,9 @@ public class User implements UserDetails {
     @Id
     @UuidGenerator
     private UUID id;
+
+    @Column(name = "refresh_token")
+    private String refreshToken;
 
     @Column(unique = true, nullable = false)
     private String username;

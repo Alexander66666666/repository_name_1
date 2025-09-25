@@ -2,11 +2,13 @@ package com.example.orderservice.controller;
 
 import com.example.orderservice.dto.AuthRequest;
 import com.example.orderservice.dto.AuthResponse;
-import com.example.orderservice.entity.User;
+import com.example.orderservice.dto.RefreshTokenRequest;
+import com.example.orderservice.exception.UserAlreadyExistsException;
 import com.example.orderservice.service.JwtService;
 import com.example.orderservice.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,30 +30,42 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody AuthRequest request) {
-        if (userService.existsByUsername(request.getUsername())) {
+        try {
+            // ЗАМЕНЯЕМ старую логику на вызов сервиса
+            AuthResponse authResponse = userService.registerUser(request);
+            return ResponseEntity.ok(authResponse);
+        } catch (UserAlreadyExistsException e) {
             return ResponseEntity.badRequest().build();
         }
-
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        User savedUser = userService.saveUser(user);
-
-        String jwtToken = jwtService.generateToken(savedUser);
-        return ResponseEntity.ok(new AuthResponse(jwtToken));
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
-        );
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
 
-        User user = (User) authentication.getPrincipal();
-        String jwtToken = jwtService.generateToken(user);
-        return ResponseEntity.ok(new AuthResponse(jwtToken));
+            // Теперь получаем AuthResponse из сервиса (с access + refresh токенами)
+            AuthResponse authResponse = userService.createAuthResponse((org.springframework.security.core.userdetails.User) authentication.getPrincipal());
+            return ResponseEntity.ok(authResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    // ДОБАВЛЯЕМ новый endpoint
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+        try {
+            // Этот метод нужно будет добавить в JwtService/UserService
+            AuthResponse authResponse = jwtService.refreshToken(request.getRefreshToken());
+            return ResponseEntity.ok(authResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 }

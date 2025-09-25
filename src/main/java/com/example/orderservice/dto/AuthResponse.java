@@ -1,11 +1,13 @@
 package com.example.orderservice.dto;
 
+import com.example.orderservice.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@SuppressWarnings("unused")
 @Data
 @AllArgsConstructor
 public class AuthResponse {
-    private String token;
+    private String accessToken;
+    private String refreshToken;
+    private Role role;
 }
